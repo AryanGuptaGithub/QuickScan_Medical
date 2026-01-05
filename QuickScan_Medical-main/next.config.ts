@@ -1,5 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -8,7 +9,6 @@ const nextConfig = {
       },
     ],
   },
-  // Remove experimental.serverActions - it's enabled by default in Next.js 14+
-}
+};
 
-module.exports = nextConfig
+export default nextConfig;
