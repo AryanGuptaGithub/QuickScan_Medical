@@ -24,13 +24,15 @@ export default function LoginForm() {
         email,
         password,
         redirect: false,
-        callbackUrl: "/dashboard",
+        // Remove hardcoded callbackUrl and let the server decide
       });
 
       if (result?.error) {
         setError(result.error);
-      } else {
-        router.push("/dashboard");
+      } else if (result?.ok) {
+        // After successful login, check if user is admin
+        // We'll check the session after login
+        router.push("/redirect");
         router.refresh();
       }
     } catch (error) {

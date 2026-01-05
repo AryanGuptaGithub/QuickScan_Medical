@@ -44,14 +44,14 @@ const Header = () => {
                 <>
                   <Link
                     href="/dashboard"
-                    className="flex items-center hover:text-blue-200 text-white no-underline"
+                    className="flex items-center hover:text-yellow-500  text-white no-underline"
                   >
                     <FiUser className="mr-1" />
                     <span>Dashboard</span>
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="hover:bg-red-500 mr-11 text-white flex items-center bg-red-300 px-5 py-2 rounded-2xl border-0 font-semibold"
+                    className="hover:bg-red-500 mr-11 hover:text-white transition-all duration-200 text-red-500 flex items-center bg-white px-5 py-2 rounded-2xl border-0 font-semibold"
                   >
                     <FiLogOut className="mr-1 " />
                     <span>Logout</span>

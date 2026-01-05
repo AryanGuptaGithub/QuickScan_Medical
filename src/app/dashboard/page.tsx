@@ -1,3 +1,4 @@
+// app/dashboard/page.tsx
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
@@ -29,18 +30,27 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [isCheckingAdmin, setIsCheckingAdmin] = useState(true);
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/login");
+      router.push("/auth/login");
+      return;
     }
-  }, [status, router]);
 
-  useEffect(() => {
-    if (session) {
+    // If user is admin, redirect to admin dashboard
+    if (session?.user?.role === "admin") {
+      console.log("Admin detected, redirecting to /admin");
+      router.push("/admin");
+      return;
+    }
+
+    // If not admin, proceed with regular dashboard
+    if (session && session.user?.role !== "admin") {
+      setIsCheckingAdmin(false);
       fetchBookings();
     }
-  }, [session]);
+  }, [status, session, router]);
 
   const fetchBookings = async () => {
     try {
@@ -136,8 +146,8 @@ export default function DashboardPage() {
       Service: ${booking.serviceName}
       Lab: ${booking.labName}
       Appointment: ${formatDate(booking.appointmentDate)} at ${formatTimeSlot(
-      booking.timeSlot
-    )}
+        booking.timeSlot
+      )}
       
       Amount: ₹${booking.totalAmount}
       Payment Status: ${booking.paymentStatus}
@@ -161,7 +171,8 @@ export default function DashboardPage() {
     await signOut({ callbackUrl: "/" });
   };
 
-  if (status === "loading" || loading) {
+  // Show loading while checking admin status or session
+  if (status === "loading" || isCheckingAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -172,10 +183,24 @@ export default function DashboardPage() {
     );
   }
 
+  // If not authenticated (should have redirected by now)
   if (!session) {
-    return null; // Will redirect in useEffect
+    return null;
   }
 
+  // If admin (should have redirected by now)
+  if (session.user?.role === "admin") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <FiLoader className="animate-spin text-4xl text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Redirecting to admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Regular user dashboard continues here
   return (
     <div className="mt-40 pb-20">
       <div className="container-custom px-4">
@@ -333,7 +358,11 @@ export default function DashboardPage() {
                         upcoming appointments.
                       </p>
                     </div>
-                    <Button href="/booking" variant="primary" className="no-underline">
+                    <Button
+                      href="/booking"
+                      variant="primary"
+                      className="no-underline"
+                    >
                       Book New Test
                     </Button>
                   </div>
@@ -364,7 +393,7 @@ export default function DashboardPage() {
                     <h3 className="text-xl font-bold">Upcoming Appointments</h3>
                     <button
                       onClick={fetchBookings}
-                      className="text-blue-600 py-2 px-4 rounded-2xl border-blue-200 bg-blue-50 text-blue-700  hover:text-blue-700 font-semibold flex items-center"
+                      className="text-blue-600 py-2 px-4 rounded-2xl border-blue-200 bg-blue-50 text-blue-700 hover:text-blue-700 font-semibold flex items-center"
                     >
                       <FiRefreshCw className="mr-2" />
                       Refresh

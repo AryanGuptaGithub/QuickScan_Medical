@@ -176,6 +176,73 @@ export async function POST(request: NextRequest) {
 
     console.log("🎉 Booking saved successfully! ID:", booking.bookingId);
 
+    // 📧 Send confirmation email (non-blocking)
+    sendBookingConfirmationEmail(booking, service, lab).catch((error) => {
+      console.error("⚠️ Email sending failed:", error.message);
+    });
+
+    async function sendBookingConfirmationEmail(
+      booking: any,
+      service: any,
+      lab: any
+    ) {
+      try {
+        const formatDate = (date: Date) => {
+          return date.toLocaleDateString("en-IN", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          });
+        };
+
+        const emailPayload = {
+          to: booking.patientEmail,
+          subject: `QuickScan Medical - Appointment Confirmed (${booking.bookingId})`,
+          template: "booking-confirmation",
+          data: {
+            patientName: booking.patientName,
+            bookingId: booking.bookingId,
+            serviceName: service.name,
+            appointmentDate: formatDate(booking.appointmentDate),
+            timeSlot: booking.timeSlot,
+            labName: lab.name,
+            labAddress: `${lab.address}, ${lab.city}`,
+            labPhone: lab.phone || "1800-123-4567",
+            amount: booking.totalAmount,
+            paymentStatus: booking.paymentStatus,
+            instructions: [
+              "Please arrive 15 minutes before your scheduled time",
+              "Bring a valid photo ID proof (Aadhar, Driving License, etc.)",
+              "Carry any previous medical reports",
+              "Fast for 8-10 hours if required for your test",
+              "Bring doctor's prescription if applicable",
+            ],
+          },
+        };
+
+        const response = await fetch(
+          `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/email/send`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(emailPayload),
+          }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+          console.log(`✅ Email sent to ${booking.patientEmail}`);
+        } else {
+          console.warn("⚠️ Email API returned error:", result.message);
+        }
+      } catch (error: any) {
+        // Log error but don't throw - booking should succeed even if email fails
+        console.error("⚠️ Email sending failed:", error.message);
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,

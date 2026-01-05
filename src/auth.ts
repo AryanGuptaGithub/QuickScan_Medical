@@ -1,4 +1,4 @@
-// auth.ts (in your project root or src)
+// auth.ts
 import NextAuth from "next-auth"
 import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import clientPromise from "@/lib/mongodb"
@@ -44,11 +44,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null
         }
 
+        // Return with role and phone
         return {
           id: user._id.toString(),
           email: user.email,
           name: user.name,
-          role: user.role
+          role: user.role || "user",
+          phone: user.phone || ""
         }
       }
     })
@@ -58,6 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.id = user.id
         token.role = user.role
+        token.phone = user.phone
       }
       return token
     },
@@ -65,6 +68,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string
         session.user.role = token.role as string
+        session.user.phone = token.phone as string
       }
       return session
     }

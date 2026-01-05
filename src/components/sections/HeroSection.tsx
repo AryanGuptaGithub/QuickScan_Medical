@@ -17,7 +17,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-r from-blue-50 to-cyan-50 py-20 md:py-32">
+    <section className="mt-15 relative bg-gradient-to-r from-blue-50 to-cyan-50 py-20 md:py-32">
       <div className="container-custom px-4">
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">

@@ -13,7 +13,7 @@ export default function MRIScanPage() {
   const service = servicesData["mri-scan"];
 
   return (
-    <div className="pt-8 mt-15 pb-20">
+    <div className="pt-20 mt-15 pb-20">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-50 to-cyan-50 py-12">
         <div className="container-custom px-4">

@@ -38,28 +38,18 @@ const TimeSlotSchema = new mongoose.Schema({
   serviceTypes: [{ 
     type: String 
   }], // ['mri', 'ct-scan', etc.]
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
-  },
-  updatedAt: { 
-    type: Date, 
-    default: Date.now 
-  }
+}, {
+  timestamps: true
 });
 
 // Compound index for efficient queries
 TimeSlotSchema.index({ labId: 1, date: 1, startTime: 1 }, { unique: true });
 
-TimeSlotSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  
+TimeSlotSchema.pre('save', function() {
   // Auto-disable if full
   if (this.currentBookings >= this.maxCapacity) {
     this.isAvailable = false;
   }
-  
-  next();
 });
 
 export default mongoose.models.TimeSlot || mongoose.model('TimeSlot', TimeSlotSchema);

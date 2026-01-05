@@ -1,10 +1,10 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { connectDB } from "@/lib/database";
 import User from "@/lib/models/User";
 import bcrypt from "bcryptjs";
 
-const authOptions = {
+const authOptions: NextAuthConfig = {
   providers: [
     Credentials({
       name: "credentials",
@@ -95,27 +95,26 @@ const authOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge:  60 * 60,
   },
   callbacks: {
-    async jwt({ token, user }: any): Promise<any> {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = (user as any).role;
       }
       return token;
     },
-    async session({ session, token }: any): Promise<any> {
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        (session.user as any).id = token.id as string;
+        (session.user as any).role = token.role as string;
       }
       return session;
     },
   },
   pages: {
     signIn: "/login",
-    signUp: "/register",
     error: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,

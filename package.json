@@ -13,17 +13,21 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.11.1",
+    "@react-email/components": "^1.0.3",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "date-fns": "^4.1.0",
     "mongoose": "^9.1.0",
     "next": "16.1.1",
     "next-auth": "^5.0.0-beta.30",
+    "nodemailer": "^7.0.12",
     "razorpay": "^2.9.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-email": "^5.1.1",
     "react-hot-toast": "^2.6.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "resend": "^6.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
