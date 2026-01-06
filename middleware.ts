@@ -13,19 +13,19 @@ export async function middleware(request: NextRequest) {
   if (pathname.startsWith('/admin')) {
     console.log('Admin route detected, checking auth...');
     
-    if (!session) {
-      console.log('No session, redirecting to login');
-      const url = new URL('/auth/login', request.url);
-      url.searchParams.set('callbackUrl', encodeURIComponent(pathname));
-      return NextResponse.redirect(url);
-    }
+    // if (!session) {
+    //   console.log('No session, redirecting to login');
+    //   const url = new URL('/auth/login', request.url);
+    //   url.searchParams.set('callbackUrl', encodeURIComponent(pathname));
+    //   return NextResponse.redirect(url);
+    // }
 
-    if (session.user?.role !== 'admin') {
-      console.log('User is not admin, redirecting');
-      const url = new URL('/', request.url);
-      url.searchParams.set('error', 'unauthorized');
-      return NextResponse.redirect(url);
-    }
+    // if (session.user?.role !== 'admin') {
+    //   console.log('User is not admin, redirecting');
+    //   const url = new URL('/', request.url);
+    //   url.searchParams.set('error', 'unauthorized');
+    //   return NextResponse.redirect(url);
+    // }
 
     console.log('Admin access granted');
   }
